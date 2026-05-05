@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>💚 Love Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<!-- Import PeerJS for Real-Time P2P Chat without a database -->
+<script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overflow:hidden;}
@@ -46,6 +48,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 .hstatus{font-size:clamp(.63rem,1.3vw,0.76rem);color:#a8cc68;display:flex;align-items:center;gap:5px;margin-top:2px;}
 .sdot{width:6px;height:6px;border-radius:50%;background:#a8cc68;animation:sp 2s ease-in-out infinite;}
 @keyframes sp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.sdot.offline { background: #ff4a4a; animation: none; }
 
 /* Messages */
 .messages{
@@ -123,21 +126,20 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 <div id="sl"></div>
 
 <div class="layout">
-  
-  <!-- Chat Screen (Always visible, setup is completely removed) -->
+  <!-- Chat Screen -->
   <div id="chat-screen" class="phone" style="display:none;">
     <div class="header">
       <div class="avatar">🥑</div>
       <div style="flex:1">
         <div class="hname" id="display-name">My Love 💚</div>
-        <div class="hstatus"><div class="sdot"></div>online now</div>
+        <div class="hstatus" id="conn-status"><div class="sdot offline"></div>waiting for partner...</div>
       </div>
       <div class="logout-btn" onclick="logout()" title="Logout">⚙️</div>
     </div>
 
     <div class="messages" id="msgs">
       <div style="text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 1rem;">
-        Secret Chat Channel Connected 🔒
+        Real-Time P2P Chat Connected 🔒
       </div>
     </div>
 
@@ -164,26 +166,24 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 </div>
 
 <script>
-// SECRET DATABASE IDENTIFIER (Setup is hardcoded and invisible)
-const DB_URL = "https://jsonblob.com/api/jsonBlob/019dfa03-7509-7668-b5a5-e4ef6faecee3";
 let myName = localStorage.getItem('loveName');
 
 const ext=['💚','💕','🌸','✨','🍯','💛','💗','🌿'];
-
 const toggleState={flame:false,heart:false};
 const toggleConfig={
   flame:{ on: {ico:'🔥', lbl:'Mood On', burst:['🔥','✨','💛','🌟']}, off:{ico:'🕯️', lbl:'Mood Off', burst:['💨','🌑']} },
   heart:{ on: {ico:'❤️‍🔥', lbl:'Heart On', burst:['❤️‍🔥','💕','💖']}, off:{ico:'🖤', lbl:'Heart Off', burst:['💔','🖤']} }
 };
 
-let isPolling = false;
-let isInitialLoad = true;
+// PeerJS Real-Time Magic 
+const ROOM_ID = 'git172002-secret-love-chat-room'; // Unique shared ID
+let peer = null;
+let activeConnection = null;
 let renderedMessageIds = new Set();
 
-async function initApp() {
-  // If the user hasn't set their name yet, ask them ONCE. No complex setup screen.
+function initApp() {
   if (!myName) {
-    myName = prompt("Welcome to Love Chat! 💚\n\nWhat is your name? (e.g. Boyfriend or Girlfriend)");
+    myName = prompt("Welcome to Love Chat! 💚\n\nWhat is your name?");
     if (!myName) {
       document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:20vh;'>Please refresh and enter your name to use the chat!</h2>";
       return;
@@ -191,78 +191,80 @@ async function initApp() {
     localStorage.setItem('loveName', myName);
   }
 
-  // Show Chat immediately
   document.getElementById('chat-screen').style.display = 'flex';
   document.getElementById('display-name').textContent = `Chatting as ${myName}`;
   
-  // Start syncing instantly
-  pollMessages();
-  setInterval(pollMessages, 2500); // Sync every 2.5 seconds
+  startPeerJS();
 }
 
-function logout() {
-  if (confirm("Do you want to change your name?")) {
-    localStorage.clear();
-    location.reload();
+function startPeerJS() {
+  // First, try to become the "Host" of the room
+  peer = new Peer(ROOM_ID);
+
+  peer.on('open', (id) => {
+    // If successful, we wait for the partner to connect
+    document.getElementById('conn-status').innerHTML = '<div class="sdot offline"></div>waiting for partner...';
+  });
+
+  peer.on('error', (err) => {
+    if (err.type === 'unavailable-id') {
+      // The Host is already online! We should connect to them.
+      peer = new Peer(); // get random id
+      peer.on('open', () => {
+        activeConnection = peer.connect(ROOM_ID);
+        setupConnection(activeConnection);
+      });
+    } else {
+      console.error(err);
+      document.getElementById('conn-status').innerHTML = '<div class="sdot offline"></div>error connecting';
+    }
+  });
+
+  // If we are the Host, this triggers when partner connects to us
+  peer.on('connection', (conn) => {
+    activeConnection = conn;
+    setupConnection(activeConnection);
+  });
+}
+
+function setupConnection(conn) {
+  conn.on('open', () => {
+    document.getElementById('conn-status').innerHTML = '<div class="sdot"></div>connected instantly!';
+  });
+  
+  conn.on('data', (payload) => {
+    appendMessageToUI(payload);
+  });
+  
+  conn.on('close', () => {
+    document.getElementById('conn-status').innerHTML = '<div class="sdot offline"></div>partner disconnected';
+    activeConnection = null;
+  });
+}
+
+function sendAction(actionType, content) {
+  const localId = 'local_' + Date.now();
+  const payload = { sender: myName, type: actionType, content: content, uuid: localId };
+  
+  // Show locally
+  appendMessageToUI(payload);
+
+  // Send instantly to partner via PeerJS (No Database!)
+  if (activeConnection && activeConnection.open) {
+    activeConnection.send(payload);
+  } else {
+    // Optional: visual indication that it wasn't sent
+    const msgs = document.getElementById('msgs');
+    const warning = document.createElement('div');
+    warning.style.cssText = 'font-size:0.7rem; color: #ff4a4a; text-align:right; margin-top:-5px; margin-bottom:5px;';
+    warning.textContent = "Partner is offline. Waiting to sync...";
+    msgs.appendChild(warning);
+    msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(() => warning.remove(), 2500);
   }
 }
 
-async function pollMessages() {
-  if (isPolling) return;
-  isPolling = true;
-  try {
-    const res = await fetch(DB_URL, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error("DB Error");
-    const messages = await res.json();
-    
-    let hasNew = false;
-    if (Array.isArray(messages)) {
-      messages.forEach(payload => {
-        if (!renderedMessageIds.has(payload.uuid)) {
-          appendMessageToUI(payload, isInitialLoad);
-          hasNew = true;
-        }
-      });
-    }
-    
-    if (hasNew) {
-      const msgs = document.getElementById('msgs');
-      msgs.scrollTop = msgs.scrollHeight;
-    }
-    isInitialLoad = false;
-  } catch(e) { }
-  isPolling = false;
-}
-
-async function sendAction(actionType, content) {
-  const localId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  const payload = { sender: myName, type: actionType, content: content, uuid: localId };
-  
-  // Instantly show on your screen
-  appendMessageToUI(payload, false);
-
-  try {
-    // 1. Fetch current history
-    const res = await fetch(DB_URL);
-    let messages = await res.json();
-    if (!Array.isArray(messages)) messages = [];
-    
-    // 2. Append new message
-    messages.push(payload);
-    
-    // 3. Keep only last 50 messages so the database stays fast
-    if (messages.length > 50) messages = messages.slice(-50);
-    
-    // 4. Save to secret database
-    await fetch(DB_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(messages)
-    });
-  } catch(e) {}
-}
-
-function appendMessageToUI(payload, isHistory = false) {
+function appendMessageToUI(payload) {
   if (payload.uuid && renderedMessageIds.has(payload.uuid)) return;
   if (payload.uuid) renderedMessageIds.add(payload.uuid);
   
@@ -287,7 +289,7 @@ function appendMessageToUI(payload, isHistory = false) {
     } else { w.appendChild(b); }
 
     msgs.appendChild(w);
-    if (!isHistory) burst(b, ext);
+    burst(b, ext);
     
   } else if (payload.type === 'toggle') {
      const { state, subtype } = payload.content;
@@ -310,7 +312,7 @@ function appendMessageToUI(payload, isHistory = false) {
     } else { w.appendChild(b); }
 
      msgs.appendChild(w);
-     if (!isHistory) burst(b, toggleConfig[subtype][state ? 'on' : 'off'].burst);
+     burst(b, toggleConfig[subtype][state ? 'on' : 'off'].burst);
   }
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -324,6 +326,13 @@ function updateToggleUI(type, state) {
   if (ico && lbl && btn) { ico.textContent = phase.ico; lbl.textContent = phase.lbl; btn.classList.toggle('on', state); }
 }
 
+function logout() {
+  if (confirm("Log out and change name?")) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
 function burst(el,symbols){
   const layer=document.getElementById('sl'), r=el.getBoundingClientRect();
   const cx=r.left+r.width/2, cy=r.top+r.height/2;
@@ -335,7 +344,6 @@ function burst(el,symbols){
   }
 }
 
-// Start
 window.onload = initApp;
 </script>
 </body>
