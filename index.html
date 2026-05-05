@@ -29,34 +29,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 @media(min-width:600px){.phone{width:min(460px,88vw);height:min(800px,92vh);border-radius:36px;}}
 @media(min-width:1024px){.phone{width:min(540px,44vw);height:min(860px,90vh);border-radius:42px;}}
 
-/* Setup / Welcome Screen */
-.setup{
-  padding:clamp(1.5rem,4vw,2.5rem);color:#fff;
-  justify-content:center; overflow-y: auto; text-align:center;
-}
-.setup h2{font-family:'Playfair Display',serif; margin-bottom:0.5rem; color:#a8cc68; font-size:clamp(1.4rem,3.5vw,1.8rem);}
-.setup .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem; text-align:left;}
-.setup label{font-size:0.85rem; color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.05em; font-weight: 500;}
-.setup input{
-  background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.15);
-  color:#fff; padding:0.9rem 1rem; border-radius:14px; outline:none;
-  font-family:inherit;font-size:1rem;transition:border-color 0.3s;
-}
-.setup input:focus{border-color:#a8cc68;background:rgba(0,0,0,0.4);}
-.setup button{
-  background:linear-gradient(135deg,#6da832,#4a7c1f); color:#fff; border:none; 
-  padding:1rem; border-radius:14px; font-weight:bold; cursor:pointer; 
-  margin-top:0.5rem;font-family:inherit;font-size:1rem;transition:transform 0.2s,box-shadow 0.2s;
-  width: 100%;
-}
-.setup button:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(109,168,50,0.3);}
-.setup button:active{transform:scale(0.98);}
-
-.magic-box {
-    background: rgba(109,168,50,0.1); border: 1px dashed rgba(109,168,50,0.5);
-    padding: 1rem; border-radius: 12px; margin-top: 1.5rem;
-}
-
 /* Header */
 .header{
   padding:clamp(.85rem,2.2vw,1.3rem) clamp(.9rem,2.8vw,1.5rem);
@@ -138,12 +110,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 #sl{position:fixed;inset:0;pointer-events:none;z-index:9999;}
 
 .logout-btn {
-  font-size:clamp(1rem,2.5vw,1.2rem); 
-  cursor:pointer; 
-  padding: 5px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
-  transition: background 0.2s;
+  font-size:clamp(1rem,2.5vw,1.2rem); cursor:pointer; padding: 5px; background: rgba(255,255,255,0.1); border-radius: 50%; transition: background 0.2s;
 }
 .logout-btn:hover { background: rgba(255,255,255,0.2); }
 </style>
@@ -157,35 +124,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 
 <div class="layout">
   
-  <!-- Welcome / Link Generator Screen (No complex setup!) -->
-  <div id="welcome-screen" class="phone setup" style="display:none;">
-    <h2 style="font-size: 3rem; margin-bottom: 0;">💚</h2>
-    <h2>Welcome to Love Chat</h2>
-    <p style="margin-bottom:1.5rem;font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.5;">
-      If you are the creator, enter your database info to generate a <strong>Magic Invite Link</strong>.
-      If you are the partner, you shouldn't be here—ask for the Magic Link!
-    </p>
-    
-    <div id="setup-form" style="display: none; width: 100%;">
-      <div class="form-group">
-        <label>Your Name</label>
-        <input id="in-name" type="text" placeholder="e.g. Boyfriend" />
-      </div>
-      <div class="form-group">
-        <label>GitHub Repo</label>
-        <input id="in-repo" type="text" placeholder="username/repo-name" />
-      </div>
-      <div class="form-group">
-        <label>GitHub Token</label>
-        <input id="in-token" type="password" placeholder="ghp_..." />
-      </div>
-      <button id="setup-btn" onclick="saveSetup()">Connect & Start Chatting 💚</button>
-    </div>
-
-    <button onclick="document.getElementById('setup-form').style.display='block'; this.style.display='none';">I am the Creator (Setup)</button>
-  </div>
-
-  <!-- Chat Screen -->
+  <!-- Chat Screen (Always visible, setup is completely removed) -->
   <div id="chat-screen" class="phone" style="display:none;">
     <div class="header">
       <div class="avatar">🥑</div>
@@ -193,12 +132,12 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
         <div class="hname" id="display-name">My Love 💚</div>
         <div class="hstatus"><div class="sdot"></div>online now</div>
       </div>
-      <div class="logout-btn" onclick="copyMagicLink()" title="Copy Invite Link for Partner">💌</div>
+      <div class="logout-btn" onclick="logout()" title="Logout">⚙️</div>
     </div>
 
     <div class="messages" id="msgs">
       <div style="text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 1rem;">
-        Messages are end-to-end encrypted in your GitHub Database.
+        Secret Chat Channel Connected 🔒
       </div>
     </div>
 
@@ -225,6 +164,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 </div>
 
 <script>
+// SECRET DATABASE IDENTIFIER (Setup is hardcoded and invisible)
+const DB_URL = "https://jsonblob.com/api/jsonBlob/019dfa03-7509-7668-b5a5-e4ef6faecee3";
+let myName = localStorage.getItem('loveName');
+
 const ext=['💚','💕','🌸','✨','🍯','💛','💗','🌿'];
 
 const toggleState={flame:false,heart:false};
@@ -233,123 +176,54 @@ const toggleConfig={
   heart:{ on: {ico:'❤️‍🔥', lbl:'Heart On', burst:['❤️‍🔥','💕','💖']}, off:{ico:'🖤', lbl:'Heart Off', burst:['💔','🖤']} }
 };
 
-let config = {
-  repo: localStorage.getItem('ghRepo'),
-  issue: localStorage.getItem('ghIssue'),
-  token: localStorage.getItem('ghToken'),
-  name: localStorage.getItem('ghName')
-};
-
-let lastCommentId = 0;
 let isPolling = false;
 let isInitialLoad = true;
 let renderedMessageIds = new Set();
 
 async function initApp() {
-  // Check for Magic Link Hash!
-  if (window.location.hash.startsWith('#invite=')) {
-    try {
-      const b64 = window.location.hash.replace('#invite=', '');
-      const inviteData = JSON.parse(atob(b64));
-      
-      const partnerName = prompt("Magic Link Connected! 💌\nWhat is YOUR name? (e.g. Girlfriend)");
-      if (!partnerName) return alert("You must enter a name!");
-
-      localStorage.setItem('ghRepo', inviteData.r);
-      localStorage.setItem('ghIssue', inviteData.i);
-      localStorage.setItem('ghToken', inviteData.t);
-      localStorage.setItem('ghName', partnerName);
-      
-      window.location.hash = ''; // Clear hash so it stays secret
-      location.reload();
+  // If the user hasn't set their name yet, ask them ONCE. No complex setup screen.
+  if (!myName) {
+    myName = prompt("Welcome to Love Chat! 💚\n\nWhat is your name? (e.g. Boyfriend or Girlfriend)");
+    if (!myName) {
+      document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:20vh;'>Please refresh and enter your name to use the chat!</h2>";
       return;
-    } catch(e) {
-      alert("Invalid Magic Link!");
     }
+    localStorage.setItem('loveName', myName);
   }
 
-  if (config.repo && config.issue && config.token && config.name) {
-    document.getElementById('chat-screen').style.display = 'flex';
-    document.getElementById('welcome-screen').style.display = 'none';
-    document.getElementById('display-name').textContent = `Chatting as ${config.name}`;
-    pollMessages();
-    setInterval(pollMessages, 3000);
-  } else {
-    document.getElementById('chat-screen').style.display = 'none';
-    document.getElementById('welcome-screen').style.display = 'flex';
-  }
+  // Show Chat immediately
+  document.getElementById('chat-screen').style.display = 'flex';
+  document.getElementById('display-name').textContent = `Chatting as ${myName}`;
+  
+  // Start syncing instantly
+  pollMessages();
+  setInterval(pollMessages, 2500); // Sync every 2.5 seconds
 }
 
-async function saveSetup() {
-  const name = document.getElementById('in-name').value.trim();
-  const repo = document.getElementById('in-repo').value.trim();
-  const token = document.getElementById('in-token').value.trim();
-  
-  if (!name || !repo || !token) return alert("Fill in all fields.");
-  
-  const btn = document.getElementById('setup-btn');
-  btn.textContent = "Connecting... ⏳";
-  btn.disabled = true;
-
-  try {
-    const createRes = await fetch(`https://api.github.com/repos/${repo}/issues`, {
-      method: 'POST',
-      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: 'Love Chat Database 💚', body: 'Database' })
-    });
-    if (!createRes.ok) throw new Error("Failed to connect. Check token and repo.");
-    
-    const newIssue = await createRes.json();
-    const issue = newIssue.number.toString();
-
-    localStorage.setItem('ghName', name);
-    localStorage.setItem('ghRepo', repo);
-    localStorage.setItem('ghIssue', issue);
-    localStorage.setItem('ghToken', token);
+function logout() {
+  if (confirm("Do you want to change your name?")) {
+    localStorage.clear();
     location.reload();
-  } catch (err) {
-    alert(err.message);
-    btn.textContent = "Connect & Start Chatting 💚";
-    btn.disabled = false;
   }
-}
-
-function copyMagicLink() {
-  const inviteData = {
-    r: config.repo,
-    i: config.issue,
-    t: config.token
-  };
-  const b64 = btoa(JSON.stringify(inviteData));
-  const link = window.location.origin + window.location.pathname + '#invite=' + b64;
-  
-  navigator.clipboard.writeText(link).then(() => {
-    alert("💌 Magic Invite Link Copied!\n\nSend this link to your partner. When they click it, the chat will open instantly with NO setup required!");
-  }).catch(() => {
-    prompt("Copy this link and send it to your partner:", link);
-  });
 }
 
 async function pollMessages() {
   if (isPolling) return;
   isPolling = true;
   try {
-    const res = await fetch(`https://api.github.com/repos/${config.repo}/issues/${config.issue}/comments?per_page=100`, {
-      headers: { 'Authorization': `token ${config.token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    const comments = await res.json();
+    const res = await fetch(DB_URL, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error("DB Error");
+    const messages = await res.json();
     
     let hasNew = false;
-    comments.forEach(c => {
-      if (c.id > lastCommentId) {
-        lastCommentId = c.id;
-        try {
-          const payload = JSON.parse(c.body);
+    if (Array.isArray(messages)) {
+      messages.forEach(payload => {
+        if (!renderedMessageIds.has(payload.uuid)) {
           appendMessageToUI(payload, isInitialLoad);
           hasNew = true;
-        } catch(e) {}
-      }
-    });
+        }
+      });
+    }
     
     if (hasNew) {
       const msgs = document.getElementById('msgs');
@@ -362,16 +236,29 @@ async function pollMessages() {
 
 async function sendAction(actionType, content) {
   const localId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  const payload = { sender: config.name, type: actionType, content: content, uuid: localId };
+  const payload = { sender: myName, type: actionType, content: content, uuid: localId };
+  
+  // Instantly show on your screen
   appendMessageToUI(payload, false);
 
   try {
-    await fetch(`https://api.github.com/repos/${config.repo}/issues/${config.issue}/comments`, {
-      method: 'POST',
-      headers: { 'Authorization': `token ${config.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body: JSON.stringify(payload) })
+    // 1. Fetch current history
+    const res = await fetch(DB_URL);
+    let messages = await res.json();
+    if (!Array.isArray(messages)) messages = [];
+    
+    // 2. Append new message
+    messages.push(payload);
+    
+    // 3. Keep only last 50 messages so the database stays fast
+    if (messages.length > 50) messages = messages.slice(-50);
+    
+    // 4. Save to secret database
+    await fetch(DB_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(messages)
     });
-    setTimeout(pollMessages, 500);
   } catch(e) {}
 }
 
@@ -379,7 +266,7 @@ function appendMessageToUI(payload, isHistory = false) {
   if (payload.uuid && renderedMessageIds.has(payload.uuid)) return;
   if (payload.uuid) renderedMessageIds.add(payload.uuid);
   
-  const isMe = payload.sender === config.name;
+  const isMe = payload.sender === myName;
   const msgs = document.getElementById('msgs');
   
   if (payload.type === 'emoji') {
@@ -448,6 +335,7 @@ function burst(el,symbols){
   }
 }
 
+// Start
 window.onload = initApp;
 </script>
 </body>
