@@ -201,8 +201,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
     </div>
     
     <div class="form-group">
-      <label>Issue Number</label>
-      <input id="in-issue" type="number" placeholder="1" />
+      <label>Issue Number (Optional)</label>
+      <input id="in-issue" type="number" placeholder="Leave blank to auto-create" />
     </div>
     
     <div class="form-group">
@@ -210,7 +210,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
       <input id="in-token" type="password" placeholder="ghp_..." />
     </div>
     
-    <button onclick="saveSetup()">Connect & Start Chatting 💚</button>
+    <button id="setup-btn" onclick="saveSetup()">Connect & Start Chatting 💚</button>
   </div>
 
   <!-- Chat Screen -->
@@ -290,22 +290,61 @@ function initApp() {
   }
 }
 
-function saveSetup() {
+async function saveSetup() {
   const name = document.getElementById('in-name').value.trim();
   const repo = document.getElementById('in-repo').value.trim();
-  const issue = document.getElementById('in-issue').value.trim();
+  let issue = document.getElementById('in-issue').value.trim();
   const token = document.getElementById('in-token').value.trim();
   
-  if (!name || !repo || !issue || !token) {
-    alert("Please fill in all fields.");
+  if (!name || !repo || !token) {
+    alert("Please fill in Name, Repo, and Token.");
     return;
   }
   
-  localStorage.setItem('ghName', name);
-  localStorage.setItem('ghRepo', repo);
-  localStorage.setItem('ghIssue', issue);
-  localStorage.setItem('ghToken', token);
-  location.reload();
+  const btn = document.getElementById('setup-btn');
+  btn.textContent = "Connecting & Verifying... ⏳";
+  btn.disabled = true;
+
+  try {
+    // 1. Verify Repo access
+    const repoRes = await fetch(`https://api.github.com/repos/${repo}`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    if (!repoRes.ok) throw new Error("Could not access Repository. Ensure your token is valid, has 'repo' scope, and the repo name is exact (username/repo).");
+
+    // 2. Auto-create issue if blank
+    if (!issue) {
+      const createRes = await fetch(`https://api.github.com/repos/${repo}/issues`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `token ${token}`, 
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title: 'Love Chat Database 💚', body: 'This issue stores the encrypted chat history. Do not close it.' })
+      });
+      if (!createRes.ok) throw new Error("Failed to auto-create the Issue. Does your token have 'repo' permissions?");
+      const newIssue = await createRes.json();
+      issue = newIssue.number.toString();
+      alert(`Successfully auto-created Database Issue #${issue}!`);
+    } else {
+      // Verify existing issue
+      const issueRes = await fetch(`https://api.github.com/repos/${repo}/issues/${issue}`, {
+        headers: { 'Authorization': `token ${token}` }
+      });
+      if (!issueRes.ok) throw new Error(`Issue #${issue} not found in repo.`);
+    }
+
+    localStorage.setItem('ghName', name);
+    localStorage.setItem('ghRepo', repo);
+    localStorage.setItem('ghIssue', issue);
+    localStorage.setItem('ghToken', token);
+    location.reload();
+  } catch (err) {
+    alert(err.message);
+    btn.textContent = "Connect & Start Chatting 💚";
+    btn.disabled = false;
+  }
 }
 
 function logout() {
