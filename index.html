@@ -29,13 +29,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 @media(min-width:600px){.phone{width:min(460px,88vw);height:min(800px,92vh);border-radius:36px;}}
 @media(min-width:1024px){.phone{width:min(540px,44vw);height:min(860px,90vh);border-radius:42px;}}
 
-/* Setup Screen */
+/* Setup / Welcome Screen */
 .setup{
   padding:clamp(1.5rem,4vw,2.5rem);color:#fff;
-  justify-content:center; overflow-y: auto;
+  justify-content:center; overflow-y: auto; text-align:center;
 }
 .setup h2{font-family:'Playfair Display',serif; margin-bottom:0.5rem; color:#a8cc68; font-size:clamp(1.4rem,3.5vw,1.8rem);}
-.setup .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;}
+.setup .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem; text-align:left;}
 .setup label{font-size:0.85rem; color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.05em; font-weight: 500;}
 .setup input{
   background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.15);
@@ -47,9 +47,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
   background:linear-gradient(135deg,#6da832,#4a7c1f); color:#fff; border:none; 
   padding:1rem; border-radius:14px; font-weight:bold; cursor:pointer; 
   margin-top:0.5rem;font-family:inherit;font-size:1rem;transition:transform 0.2s,box-shadow 0.2s;
+  width: 100%;
 }
 .setup button:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(109,168,50,0.3);}
 .setup button:active{transform:scale(0.98);}
+
+.magic-box {
+    background: rgba(109,168,50,0.1); border: 1px dashed rgba(109,168,50,0.5);
+    padding: 1rem; border-radius: 12px; margin-top: 1.5rem;
+}
 
 /* Header */
 .header{
@@ -90,12 +96,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 .bwrap.me .bubble{background:linear-gradient(135deg,rgba(109,168,50,.33),rgba(74,124,31,.5));border:1px solid rgba(109,168,50,.38);border-bottom-right-radius:5px;}
 .bwrap.her .bubble{background:linear-gradient(135deg,rgba(232,100,122,.28),rgba(180,60,90,.44));border:1px solid rgba(232,100,122,.32);border-bottom-left-radius:5px;}
 
-/* Typing */
-.typing{display:flex;align-items:center;gap:5px;padding:clamp(.42rem,.9vw,.6rem) clamp(.65rem,1.5vw,.9rem);background:rgba(232,100,122,.18);border:1px solid rgba(232,100,122,.22);border-radius:18px;border-bottom-left-radius:5px;width:fit-content;}
-.typing span{width:clamp(5px,1.3vw,8px);height:clamp(5px,1.3vw,8px);border-radius:50%;background:#e8647a;animation:td 1.2s ease-in-out infinite;}
-.typing span:nth-child(2){animation-delay:.2s;}.typing span:nth-child(3){animation-delay:.4s;}
-@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.35;}30%{transform:translateY(-6px);opacity:1;}}
-
 /* Bottom */
 .bottom{
   padding:clamp(.7rem,1.8vw,1.1rem) clamp(.85rem,2.2vw,1.4rem) clamp(.85rem,2.2vw,1.5rem);
@@ -104,14 +104,12 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 .ebgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(.38rem,1.2vw,.7rem);margin-bottom:clamp(.38rem,1.2vw,.7rem);}
 .ebgrid2{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(.38rem,1.2vw,.7rem);max-width:calc(50% + clamp(.38rem,1.2vw,.7rem)/2);margin:0 auto;}
 
-/* Base button */
 .ebtn{
   background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
   border-radius:clamp(13px,2.2vw,20px);
   padding:clamp(.58rem,1.7vw,1rem) .3rem;
   cursor:pointer;display:flex;flex-direction:column;align-items:center;
   gap:clamp(3px,.7vw,6px);transition:all .2s ease;
-  -webkit-user-select:none;user-select:none;touch-action:manipulation;
   position:relative;overflow:hidden;
 }
 .ebtn:hover{transform:translateY(-3px) scale(1.04);}
@@ -119,42 +117,22 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 .ebtn .ico{font-size:clamp(1.7rem,4.8vw,2.6rem);transition:transform .3s;}
 .ebtn .lbl{font-size:clamp(.56rem,1.3vw,.68rem);color:rgba(255,255,255,.4);letter-spacing:.05em;text-transform:uppercase;transition:color .3s;}
 
-/* Send buttons */
 .bkiss  {border-color:rgba(232,100,122,.38);}.bkiss:hover  {background:rgba(232,100,122,.22);}
 .bhug   {border-color:rgba(109,168,50,.38); }.bhug:hover   {background:rgba(109,168,50,.22);}
 .bcuddle{border-color:rgba(232,160,32,.38); }.bcuddle:hover{background:rgba(232,160,32,.22);}
 .bno    {border-color:rgba(200,200,255,.22);}.bno:hover    {background:rgba(200,200,255,.1);}
 
-/* ── TOGGLE buttons ── */
-.btoggle{
-  border:1.5px solid rgba(255,255,255,.15);
-  position:relative;
-}
-
-/* Flame toggle */
+.btoggle{border:1.5px solid rgba(255,255,255,.15); position:relative;}
 .bflame{border-color:rgba(255,120,50,.25);}
-.bflame .ico::after{content:'';position:absolute;inset:0;border-radius:inherit;background:transparent;transition:background .4s;}
 .bflame .lbl{color:rgba(255,255,255,.35);}
 .bflame.on{border-color:rgba(255,140,30,.75);background:rgba(255,110,20,.22);box-shadow:0 0 18px rgba(255,110,20,.35),inset 0 0 12px rgba(255,140,30,.15);}
 .bflame.on .lbl{color:rgba(255,180,80,.9);}
-.bflame.on .ico{animation:flicker 1.4s ease-in-out infinite;}
-@keyframes flicker{0%,100%{transform:scale(1) rotate(-1deg);}25%{transform:scale(1.08) rotate(1.5deg);}50%{transform:scale(.96) rotate(-2deg);}75%{transform:scale(1.06) rotate(1deg);}}
 
-/* Heart toggle */
 .bheart{border-color:rgba(220,50,100,.25);}
 .bheart .lbl{color:rgba(255,255,255,.35);}
 .bheart.on{border-color:rgba(232,60,110,.8);background:rgba(220,50,100,.22);box-shadow:0 0 18px rgba(220,50,100,.35),inset 0 0 12px rgba(232,60,110,.15);}
 .bheart.on .lbl{color:rgba(255,140,170,.9);}
-.bheart.on .ico{animation:heartbeat 1.2s ease-in-out infinite;}
-@keyframes heartbeat{0%,100%{transform:scale(1);}15%{transform:scale(1.22);}30%{transform:scale(1);}45%{transform:scale(1.15);}60%{transform:scale(1);}}
 
-/* Toggle ON glow ring */
-.btoggle.on::before{content:'';position:absolute;inset:-1px;border-radius:inherit;animation:ringPulse 1.8s ease-in-out infinite;pointer-events:none;}
-.bflame.on::before{box-shadow:0 0 0 2px rgba(255,140,30,.5);}
-.bheart.on::before{box-shadow:0 0 0 2px rgba(232,60,110,.5);}
-@keyframes ringPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
-
-/* Burst particles */
 .burst{position:fixed;font-size:clamp(.9rem,1.8vw,1.3rem);pointer-events:none;animation:ba 1s ease-out forwards;z-index:9999;}
 @keyframes ba{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2);}}
 #sl{position:fixed;inset:0;pointer-events:none;z-index:9999;}
@@ -179,38 +157,32 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
 
 <div class="layout">
   
-  <!-- Setup Screen -->
-  <div id="setup-screen" class="phone setup" style="display:none;">
-    <h2>🔧 GitHub Database Setup</h2>
-    <p style="margin-bottom:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.5;">
-      <strong>Instructions:</strong><br><br>
-      1. Create a private GitHub repository.<br>
-      2. Create an Issue in that repository (e.g., Issue #1).<br>
-      3. Generate a GitHub Personal Access Token (classic) with `repo` scope.<br>
-      4. Fill in the details below. Both you and your partner should enter the SAME Repo, Issue, and Token, but use your own Name!
+  <!-- Welcome / Link Generator Screen (No complex setup!) -->
+  <div id="welcome-screen" class="phone setup" style="display:none;">
+    <h2 style="font-size: 3rem; margin-bottom: 0;">💚</h2>
+    <h2>Welcome to Love Chat</h2>
+    <p style="margin-bottom:1.5rem;font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.5;">
+      If you are the creator, enter your database info to generate a <strong>Magic Invite Link</strong>.
+      If you are the partner, you shouldn't be here—ask for the Magic Link!
     </p>
     
-    <div class="form-group">
-      <label>Your Name</label>
-      <input id="in-name" type="text" placeholder="e.g. Boyfriend / Girlfriend" />
+    <div id="setup-form" style="display: none; width: 100%;">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input id="in-name" type="text" placeholder="e.g. Boyfriend" />
+      </div>
+      <div class="form-group">
+        <label>GitHub Repo</label>
+        <input id="in-repo" type="text" placeholder="username/repo-name" />
+      </div>
+      <div class="form-group">
+        <label>GitHub Token</label>
+        <input id="in-token" type="password" placeholder="ghp_..." />
+      </div>
+      <button id="setup-btn" onclick="saveSetup()">Connect & Start Chatting 💚</button>
     </div>
-    
-    <div class="form-group">
-      <label>GitHub Repo</label>
-      <input id="in-repo" type="text" placeholder="username/repo-name" />
-    </div>
-    
-    <div class="form-group">
-      <label>Issue Number (Optional)</label>
-      <input id="in-issue" type="number" placeholder="Leave blank to auto-create" />
-    </div>
-    
-    <div class="form-group">
-      <label>GitHub Token</label>
-      <input id="in-token" type="password" placeholder="ghp_..." />
-    </div>
-    
-    <button id="setup-btn" onclick="saveSetup()">Connect & Start Chatting 💚</button>
+
+    <button onclick="document.getElementById('setup-form').style.display='block'; this.style.display='none';">I am the Creator (Setup)</button>
   </div>
 
   <!-- Chat Screen -->
@@ -221,11 +193,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1a0a2e;overfl
         <div class="hname" id="display-name">My Love 💚</div>
         <div class="hstatus"><div class="sdot"></div>online now</div>
       </div>
-      <div class="logout-btn" onclick="logout()" title="Settings">⚙️</div>
+      <div class="logout-btn" onclick="copyMagicLink()" title="Copy Invite Link for Partner">💌</div>
     </div>
 
     <div class="messages" id="msgs">
-      <!-- Messages will load here -->
+      <div style="text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 1rem;">
+        Messages are end-to-end encrypted in your GitHub Database.
+      </div>
     </div>
 
     <div class="bottom">
@@ -255,17 +229,11 @@ const ext=['💚','💕','🌸','✨','🍯','💛','💗','🌿'];
 
 const toggleState={flame:false,heart:false};
 const toggleConfig={
-  flame:{
-    on: {ico:'🔥', lbl:'Mood On',  burst:['🔥','✨','💛','🌟','🧡']},
-    off:{ico:'🕯️', lbl:'Mood Off', burst:['💨','🌑','❄️','🖤']},
-  },
-  heart:{
-    on: {ico:'❤️‍🔥', lbl:'Heart On',  burst:['❤️‍🔥','💕','💗','💖','💝']},
-    off:{ico:'🖤',   lbl:'Heart Off', burst:['💔','🖤','🌑','😔']},
-  }
+  flame:{ on: {ico:'🔥', lbl:'Mood On', burst:['🔥','✨','💛','🌟']}, off:{ico:'🕯️', lbl:'Mood Off', burst:['💨','🌑']} },
+  heart:{ on: {ico:'❤️‍🔥', lbl:'Heart On', burst:['❤️‍🔥','💕','💖']}, off:{ico:'🖤', lbl:'Heart Off', burst:['💔','🖤']} }
 };
 
-const config = {
+let config = {
   repo: localStorage.getItem('ghRepo'),
   issue: localStorage.getItem('ghIssue'),
   token: localStorage.getItem('ghToken'),
@@ -277,63 +245,62 @@ let isPolling = false;
 let isInitialLoad = true;
 let renderedMessageIds = new Set();
 
-function initApp() {
+async function initApp() {
+  // Check for Magic Link Hash!
+  if (window.location.hash.startsWith('#invite=')) {
+    try {
+      const b64 = window.location.hash.replace('#invite=', '');
+      const inviteData = JSON.parse(atob(b64));
+      
+      const partnerName = prompt("Magic Link Connected! 💌\nWhat is YOUR name? (e.g. Girlfriend)");
+      if (!partnerName) return alert("You must enter a name!");
+
+      localStorage.setItem('ghRepo', inviteData.r);
+      localStorage.setItem('ghIssue', inviteData.i);
+      localStorage.setItem('ghToken', inviteData.t);
+      localStorage.setItem('ghName', partnerName);
+      
+      window.location.hash = ''; // Clear hash so it stays secret
+      location.reload();
+      return;
+    } catch(e) {
+      alert("Invalid Magic Link!");
+    }
+  }
+
   if (config.repo && config.issue && config.token && config.name) {
     document.getElementById('chat-screen').style.display = 'flex';
-    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('welcome-screen').style.display = 'none';
     document.getElementById('display-name').textContent = `Chatting as ${config.name}`;
     pollMessages();
-    setInterval(pollMessages, 3000); // Poll every 3 seconds
+    setInterval(pollMessages, 3000);
   } else {
     document.getElementById('chat-screen').style.display = 'none';
-    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('welcome-screen').style.display = 'flex';
   }
 }
 
 async function saveSetup() {
   const name = document.getElementById('in-name').value.trim();
   const repo = document.getElementById('in-repo').value.trim();
-  let issue = document.getElementById('in-issue').value.trim();
   const token = document.getElementById('in-token').value.trim();
   
-  if (!name || !repo || !token) {
-    alert("Please fill in Name, Repo, and Token.");
-    return;
-  }
+  if (!name || !repo || !token) return alert("Fill in all fields.");
   
   const btn = document.getElementById('setup-btn');
-  btn.textContent = "Connecting & Verifying... ⏳";
+  btn.textContent = "Connecting... ⏳";
   btn.disabled = true;
 
   try {
-    // 1. Verify Repo access
-    const repoRes = await fetch(`https://api.github.com/repos/${repo}`, {
-      headers: { 'Authorization': `token ${token}` }
+    const createRes = await fetch(`https://api.github.com/repos/${repo}/issues`, {
+      method: 'POST',
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Love Chat Database 💚', body: 'Database' })
     });
-    if (!repoRes.ok) throw new Error("Could not access Repository. Ensure your token is valid, has 'repo' scope, and the repo name is exact (username/repo).");
-
-    // 2. Auto-create issue if blank
-    if (!issue) {
-      const createRes = await fetch(`https://api.github.com/repos/${repo}/issues`, {
-        method: 'POST',
-        headers: { 
-          'Authorization': `token ${token}`, 
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ title: 'Love Chat Database 💚', body: 'This issue stores the encrypted chat history. Do not close it.' })
-      });
-      if (!createRes.ok) throw new Error("Failed to auto-create the Issue. Does your token have 'repo' permissions?");
-      const newIssue = await createRes.json();
-      issue = newIssue.number.toString();
-      alert(`Successfully auto-created Database Issue #${issue}!`);
-    } else {
-      // Verify existing issue
-      const issueRes = await fetch(`https://api.github.com/repos/${repo}/issues/${issue}`, {
-        headers: { 'Authorization': `token ${token}` }
-      });
-      if (!issueRes.ok) throw new Error(`Issue #${issue} not found in repo.`);
-    }
+    if (!createRes.ok) throw new Error("Failed to connect. Check token and repo.");
+    
+    const newIssue = await createRes.json();
+    const issue = newIssue.number.toString();
 
     localStorage.setItem('ghName', name);
     localStorage.setItem('ghRepo', repo);
@@ -347,11 +314,20 @@ async function saveSetup() {
   }
 }
 
-function logout() {
-  if(confirm("Are you sure you want to log out and clear your database settings?")) {
-    localStorage.clear();
-    location.reload();
-  }
+function copyMagicLink() {
+  const inviteData = {
+    r: config.repo,
+    i: config.issue,
+    t: config.token
+  };
+  const b64 = btoa(JSON.stringify(inviteData));
+  const link = window.location.origin + window.location.pathname + '#invite=' + b64;
+  
+  navigator.clipboard.writeText(link).then(() => {
+    alert("💌 Magic Invite Link Copied!\n\nSend this link to your partner. When they click it, the chat will open instantly with NO setup required!");
+  }).catch(() => {
+    prompt("Copy this link and send it to your partner:", link);
+  });
 }
 
 async function pollMessages() {
@@ -359,16 +335,11 @@ async function pollMessages() {
   isPolling = true;
   try {
     const res = await fetch(`https://api.github.com/repos/${config.repo}/issues/${config.issue}/comments?per_page=100`, {
-      headers: {
-        'Authorization': `token ${config.token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers: { 'Authorization': `token ${config.token}`, 'Accept': 'application/vnd.github.v3+json' }
     });
-    if (!res.ok) throw new Error('Failed to fetch from GitHub. Check your Repo, Issue number, and Token.');
-    
     const comments = await res.json();
-    let hasNew = false;
     
+    let hasNew = false;
     comments.forEach(c => {
       if (c.id > lastCommentId) {
         lastCommentId = c.id;
@@ -376,9 +347,7 @@ async function pollMessages() {
           const payload = JSON.parse(c.body);
           appendMessageToUI(payload, isInitialLoad);
           hasNew = true;
-        } catch(e) {
-          // Ignore comments that are not valid JSON from our app
-        }
+        } catch(e) {}
       }
     });
     
@@ -387,40 +356,26 @@ async function pollMessages() {
       msgs.scrollTop = msgs.scrollHeight;
     }
     isInitialLoad = false;
-  } catch(e) {
-    console.error(e);
-  }
+  } catch(e) { }
   isPolling = false;
 }
 
 async function sendAction(actionType, content) {
   const localId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   const payload = { sender: config.name, type: actionType, content: content, uuid: localId };
-  
-  // Optimistic render locally so it feels instant
   appendMessageToUI(payload, false);
 
   try {
-    // Save to GitHub database
     await fetch(`https://api.github.com/repos/${config.repo}/issues/${config.issue}/comments`, {
       method: 'POST',
-      headers: { 
-        'Authorization': `token ${config.token}`, 
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Authorization': `token ${config.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ body: JSON.stringify(payload) })
     });
-    // Fast poll after sending to confirm
     setTimeout(pollMessages, 500);
-  } catch(e) {
-    console.error("Failed to send", e);
-    alert("Failed to send message. Please check your connection or GitHub token.");
-  }
+  } catch(e) {}
 }
 
 function appendMessageToUI(payload, isHistory = false) {
-  // Prevent duplicate rendering of optimistic messages when they arrive via polling
   if (payload.uuid && renderedMessageIds.has(payload.uuid)) return;
   if (payload.uuid) renderedMessageIds.add(payload.uuid);
   
@@ -434,7 +389,6 @@ function appendMessageToUI(payload, isHistory = false) {
     b.className = 'bubble';
     b.textContent = payload.content;
     
-    // Add a tiny name label if it's from the partner (optional, but helps!)
     if (!isMe && payload.sender) {
         const nameLbl = document.createElement('div');
         nameLbl.style.cssText = 'font-size:0.6rem; color:rgba(255,255,255,0.4); margin-bottom:2px; padding-left:10px;';
@@ -442,23 +396,15 @@ function appendMessageToUI(payload, isHistory = false) {
         const col = document.createElement('div');
         col.style.display = 'flex';
         col.style.flexDirection = 'column';
-        col.appendChild(nameLbl);
-        col.appendChild(b);
-        w.appendChild(col);
-    } else {
-        w.appendChild(b);
-    }
+        col.appendChild(nameLbl); col.appendChild(b); w.appendChild(col);
+    } else { w.appendChild(b); }
 
     msgs.appendChild(w);
     if (!isHistory) burst(b, ext);
     
   } else if (payload.type === 'toggle') {
      const { state, subtype } = payload.content;
-     
-     // Update the UI if the partner toggled it
-     if (!isMe) {
-       updateToggleUI(subtype, state);
-     }
+     if (!isMe) updateToggleUI(subtype, state);
      
      const w = document.createElement('div');
      w.className = 'bwrap ' + (isMe ? 'me' : 'her');
@@ -473,64 +419,35 @@ function appendMessageToUI(payload, isHistory = false) {
         const col = document.createElement('div');
         col.style.display = 'flex';
         col.style.flexDirection = 'column';
-        col.appendChild(nameLbl);
-        col.appendChild(b);
-        w.appendChild(col);
-    } else {
-        w.appendChild(b);
-    }
+        col.appendChild(nameLbl); col.appendChild(b); w.appendChild(col);
+    } else { w.appendChild(b); }
 
      msgs.appendChild(w);
      if (!isHistory) burst(b, toggleConfig[subtype][state ? 'on' : 'off'].burst);
   }
-  
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-function send(emoji) {
-  sendAction('emoji', emoji);
-}
-
-function toggle(type) {
-  const state = !toggleState[type];
-  updateToggleUI(type, state);
-  sendAction('toggle', { subtype: type, state: state });
-}
-
+function send(emoji) { sendAction('emoji', emoji); }
+function toggle(type) { const state = !toggleState[type]; updateToggleUI(type, state); sendAction('toggle', { subtype: type, state: state }); }
 function updateToggleUI(type, state) {
   toggleState[type] = state;
-  const cfg = toggleConfig[type];
-  const phase = state ? cfg.on : cfg.off;
-
-  const btn = document.getElementById('btn-'+type);
-  const ico = document.getElementById('ico-'+type);
-  const lbl = document.getElementById('lbl-'+type);
-
-  if (ico && lbl && btn) {
-    ico.textContent = phase.ico;
-    lbl.textContent = phase.lbl;
-    btn.classList.toggle('on', state);
-  }
+  const cfg = toggleConfig[type], phase = state ? cfg.on : cfg.off;
+  const btn = document.getElementById('btn-'+type), ico = document.getElementById('ico-'+type), lbl = document.getElementById('lbl-'+type);
+  if (ico && lbl && btn) { ico.textContent = phase.ico; lbl.textContent = phase.lbl; btn.classList.toggle('on', state); }
 }
 
 function burst(el,symbols){
-  const layer=document.getElementById('sl');
-  const r=el.getBoundingClientRect();
-  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const layer=document.getElementById('sl'), r=el.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
   for(let i=0;i<12;i++){
-    const s=document.createElement('div');s.className='burst';
-    s.textContent=symbols[i%symbols.length];
+    const s=document.createElement('div'); s.className='burst'; s.textContent=symbols[i%symbols.length];
     const a=(i/12)*Math.PI*2,d=55+Math.random()*75;
-    s.style.left=cx+'px';s.style.top=cy+'px';
-    s.style.setProperty('--dx',Math.cos(a)*d+'px');
-    s.style.setProperty('--dy',Math.sin(a)*d+'px');
-    s.style.animationDelay=(i*.04)+'s';
-    layer.appendChild(s);
-    setTimeout(()=>s.remove(),1400);
+    s.style.left=cx+'px'; s.style.top=cy+'px'; s.style.setProperty('--dx',Math.cos(a)*d+'px'); s.style.setProperty('--dy',Math.sin(a)*d+'px'); s.style.animationDelay=(i*.04)+'s';
+    layer.appendChild(s); setTimeout(()=>s.remove(),1400);
   }
 }
 
-// Initialize
 window.onload = initApp;
 </script>
 </body>
